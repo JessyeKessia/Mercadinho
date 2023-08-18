@@ -10,7 +10,26 @@ class Caixa:
         return produto
     
     def exibe_todos_produtos(self):
+        ''' Função para exibir todos os produtos '''
         return self.tabela
+    
+    def abastecer_estoque(self, produto, quantidade):
+        ''' Função para abastecer o estoque '''
+        produto = self.procurar(produto)
+        produto = produto.values.tolist()
+        produto = produto[0]
+        estoque = produto[1]
+        novo_estoque = estoque + quantidade
+        self.tabela.loc[self.tabela['Nome']==produto[0], 'Quantidade'] = novo_estoque
+        self.tabela.to_excel('Mercado.xlsx', index =False)
+        return f'|Estoque abastecido. Estoque atual: {novo_estoque}|'
+
+    def resetar_valor(self):
+        ''' Função para resetar todos os valores vendidos'''
+        produtos = self.tabela.values.tolist()
+        for produto in produtos:
+            self.tabela.loc[self.tabela['Nome']==produto[0], 'Valor vendido'] = 0.00
+            self.tabela.to_excel('Mercado.xlsx', index =False)
     
     def vender(self, produto, quantidade):
         ''' Função para vender um produto '''
@@ -29,8 +48,6 @@ class Caixa:
             self.tabela.loc[self.tabela['Nome']==produto[0], 'Valor vendido'] = produto[5] + valor_real
             self.tabela.to_excel('Mercado.xlsx', index =False)
             return f'|R$ {valor_real:.2f}|'
-        
         else:
             return f'Venda negada! Há apenas {produto[1]} em estoque'
-
-    
+        
